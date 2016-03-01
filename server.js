@@ -34,6 +34,30 @@ app.get('/todos/:id', function(req, res){
 		res.status(404).send('Id of ' + req.params.id + ' not found!');
 });
 
+app.delete('/todos/:id', function(req, res){
+	//console.log('param is ' + req.params.id + ' lenght of the array ' + todos.length);
+	/*for (var i=0; i<todos.length; i++)
+	{
+		//you can also use parseInt(string, radix);
+	//	console.log(todos[i]);
+		if (todos[i].id == req.params.id) // === Number(req.params.id) == req.params.id) //)
+		{
+			res.json(todos[i]);
+			return;
+		}
+	}*/
+	var todoId = parseInt(req.params.id);
+	var matchedTodo = _.findWhere(todos, {id: todoId});
+	if (matchedTodo)
+	{
+
+		todos = _.without(todos, matchedTodo);
+		res.json(matchedTodo);
+	}
+	else
+		res.status(404).json({"error":"no todo found with that id"});
+});
+
 app.post('/todos', function(req, res){
 	//pick only description and completed
 	var body = _.pick(req.body, 'description', 'completed');
