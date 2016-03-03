@@ -247,6 +247,32 @@ app.get('/', function(req, res){
 	res.send('Hello world' );
 });
 
+app.post('/users', function(req, res){
+	//pick only description and completed
+	var body = _.pick(req.body, 'email', 'password');
+	console.log(body);
+	//var body=req.body;
+
+	db.user.create(
+		body
+	).then(function(user){
+		if(user)
+		{
+			res.json(user);
+		}
+		else
+		{
+			res.status(400).send('could not create user');
+		}
+	}, function(e){
+		//failed
+		res.status(500).send(e);
+	}).catch(function(error){
+		res.status(500).send(error);
+	});
+
+});
+
 db.sequelize.sync().then(function(){
 app.listen(PORT, function(){
 	console.log('Express started and listening on port ' + PORT);
