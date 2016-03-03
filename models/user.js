@@ -17,6 +17,15 @@ module.exports = function(sequelize, DataTypes){
 			//check documente for validation for regular expressions
 		}
 	}
+}, {
+	hooks:{
+		beforeValidate: function(user, option){
+			if (typeof user.email !== 'undefined' && typeof user.email === 'string')
+			{
+				user.email = user.email.toLowerCase();
+			}
+		}
+	}
 });
 
 };
