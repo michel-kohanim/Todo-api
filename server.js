@@ -258,7 +258,7 @@ app.post('/users', function(req, res){
 	).then(function(user){
 		if(user)
 		{
-			res.json(user);
+			res.json(user.toPublicJSON());
 		}
 		else
 		{
@@ -273,7 +273,7 @@ app.post('/users', function(req, res){
 
 });
 
-db.sequelize.sync().then(function(){
+db.sequelize.sync({force:true}).then(function(){
 app.listen(PORT, function(){
 	console.log('Express started and listening on port ' + PORT);
 });
