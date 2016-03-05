@@ -279,7 +279,7 @@ app.post('/users', function(req, res){
 app.post('/users/login', function(req, res){
 
 	db.user.authenticate(req.body).then(function(user){
-		res.send(user.toPublicJSON());
+		res.header('Auth', user.generateToken('authentication')).send(user.toPublicJSON());
 	}, function(error)
 	{
 		res.status(401).send('Invalid Username/passowrd');
@@ -319,7 +319,7 @@ app.post('/users/login', function(req, res){
 
 });
 
-db.sequelize.sync({force:true}).then(function(){
+db.sequelize.sync(/*{force:true}*/).then(function(){
 app.listen(PORT, function(){
 	console.log('Express started and listening on port ' + PORT);
 });
