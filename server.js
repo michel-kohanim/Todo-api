@@ -279,7 +279,12 @@ app.post('/users', function(req, res){
 app.post('/users/login', function(req, res){
 
 	db.user.authenticate(req.body).then(function(user){
-		res.header('Auth', user.generateToken('authentication')).send(user.toPublicJSON());
+		var token = user.generateToken('authentication');
+		if (token)
+			res.header('Auth', token).send(user.toPublicJSON());
+		else
+			res.status(401).send('Invalid Username/passowrd');
+
 	}, function(error)
 	{
 		res.status(401).send('Invalid Username/passowrd');
