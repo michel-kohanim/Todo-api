@@ -278,6 +278,15 @@ app.post('/users', function(req, res){
 
 app.post('/users/login', function(req, res){
 
+	db.user.authenticate(req.body).then(function(user){
+		res.send(user.toPublicJSON());
+	}, function(error)
+	{
+		res.status(401).send('Invalid Username/passowrd');
+	}).catch(function (error){
+		res.status(401).send('Invalid Username/passowrd');
+	});
+	/*
 	var body = _.pick(req.body, 'email', 'password');
 	console.log(body);
 	//var body=req.body;
@@ -306,10 +315,11 @@ app.post('/users/login', function(req, res){
 	).catch(function(e){
 		res.status(500).send(error);
 	});
+	*/
 
 });
 
-db.sequelize.sync(/*{force:true}*/).then(function(){
+db.sequelize.sync({force:true}).then(function(){
 app.listen(PORT, function(){
 	console.log('Express started and listening on port ' + PORT);
 });
