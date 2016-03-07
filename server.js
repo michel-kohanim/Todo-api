@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var _ = require('underscore');
 var db = require('./db.js');
 var bcrypt = require('bcrypt');
+var middleware = require('./middleware.js')(db); //goes inside the routes
 
 var PORT = process.env.PORT || 3000;
 var todos = [];
@@ -12,7 +13,7 @@ var todoNextId = 1; //increment ids
 
 app.use(bodyParser.json());
 
-app.get('/todos', function(req, res){
+app.get('/todos', middleware.requireAuthentication, function(req, res){
 
 	var queryParams = req.query;
 	var filter = {
@@ -72,7 +73,7 @@ app.get('/todos', function(req, res){
 	*/
 });
 
-app.get('/todos/:id', function(req, res){
+app.get('/todos/:id', middleware.requireAuthentication, function(req, res){
 	//console.log('param is ' + req.params.id + ' lenght of the array ' + todos.length);
 	/*for (var i=0; i<todos.length; i++)
 	{
@@ -107,7 +108,7 @@ app.get('/todos/:id', function(req, res){
 	*/
 });
 
-app.delete('/todos/:id', function(req, res){
+app.delete('/todos/:id',middleware.requireAuthentication,  function(req, res){
 	//console.log('param is ' + req.params.id + ' lenght of the array ' + todos.length);
 	/*for (var i=0; i<todos.length; i++)
 	{
@@ -139,7 +140,7 @@ app.delete('/todos/:id', function(req, res){
 	});
 });
 
-app.put('/todos/:id', function(req, res){
+app.put('/todos/:id', middleware.requireAuthentication, function(req, res){
 	//console.log('param is ' + req.params.id + ' lenght of the array ' + todos.length);
 	/*for (var i=0; i<todos.length; i++)
 	{
@@ -207,7 +208,7 @@ app.put('/todos/:id', function(req, res){
 	*/
 });
 
-app.post('/todos', function(req, res){
+app.post('/todos', middleware.requireAuthentication, function(req, res){
 	//pick only description and completed
 	var body = _.pick(req.body, 'description', 'completed');
 	//console.log(body);
