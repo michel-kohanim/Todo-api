@@ -17,7 +17,9 @@ app.get('/todos', middleware.requireAuthentication, function(req, res){
 
 	var queryParams = req.query;
 	var filter = {
-		where: {}
+		where: {
+			userId:req.user.get('id')
+		}
 	};
 
 	if (queryParams.hasOwnProperty('completed') && queryParams.completed==='true')
@@ -86,7 +88,13 @@ app.get('/todos/:id', middleware.requireAuthentication, function(req, res){
 		}
 	}*/
 	var todoId = parseInt(req.params.id);
-	db.todo.findById(todoId).then(function(todo){
+	var filter = {
+		where: {
+			userId:req.user.get('id'),
+			id:todoId
+		}
+	};
+	db.todo.findOne(filter).then(function(todo){
 		if (todo)
 			res.json(todo);
 		else
@@ -123,9 +131,10 @@ app.delete('/todos/:id',middleware.requireAuthentication,  function(req, res){
 	var todoId = parseInt(req.params.id);
 	var filter = {
 		where: {
-			id: todoId
+			userId:req.user.get('id'),
+			id:todoId
 		}
-	}
+	};
 	db.todo.destroy(filter).then(function(todo){
 		if (todo)
 			res.json(todo);
@@ -155,9 +164,10 @@ app.put('/todos/:id', middleware.requireAuthentication, function(req, res){
 	var todoId = parseInt(req.params.id);
 	var filter = {
 		where: {
-			id: todoId
+			userId:req.user.get('id'),
+			id:todoId
 		}
-	}
+	};
 	var body = _.pick(req.body, 'description', 'completed');
 
 	db.todo.update(body,filter).then(function(todo)
@@ -330,7 +340,7 @@ app.post('/users/login', function(req, res){
 
 });
 
-db.sequelize.sync({force:true}).then(function(){
+db.sequelize.sync(/*{force:true}*/).then(function(){
 app.listen(PORT, function(){
 	console.log('Express started and listening on port ' + PORT);
 });
