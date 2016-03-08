@@ -293,17 +293,24 @@ app.post('/users', function(req, res){
 //post /users/login
 
 app.post('/users/login', function(req, res){
+	var userInstance;
 
 	db.user.authenticate(req.body).then(function(user){
 		var token = user.generateToken('authentication');
+		userInstance=user;
+		return db.token.create({
+			token:token
+		});
+		/*
 		if (token)
 			res.header('Auth', token).send(user.toPublicJSON());
 		else
 			res.status(401).send('Invalid Username/passowrd');
+		*/
 
-	}, function(error)
+	}).then(function(tokenInstance)
 	{
-		res.status(401).send('Invalid Username/passowrd');
+		res.header('Auth', tokenInstance.get('token')).send(userInstance.toPublicJSON());
 	}).catch(function (error){
 		res.status(401).send('Invalid Username/passowrd');
 	});
@@ -337,6 +344,15 @@ app.post('/users/login', function(req, res){
 		res.status(500).send(error);
 	});
 	*/
+
+});
+
+app.delete('/users/login', middleware.requireAuthentication, function (req,res){
+	req.token.destroy().then(function(){
+		res.status(204).send();
+	}).catch(function(){
+		res.status(500).send();
+	})
 
 });
 
