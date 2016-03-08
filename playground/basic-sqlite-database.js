@@ -22,52 +22,15 @@ var Todo = sequelize.define('todo' /*model name*/, {
 	}
 });
 
+var User = sequelize.define('user', {
+	email: Sequelize.STRING
+});
+
+Todo.belongsTo(User);
+User.hasMany(Todo);
 //if you add force: true, we can wipe it:
 //sequelize.sync({force: true})...
-sequelize.sync().then(function(){
+sequelize.sync({force:true}).then(function(){
 	console.log('Everything is synched' );
-	Todo.findById(2).then(function(todo){
-		if (todo)
-			console.log(todo.toJSON());
-		else
-			console.log ('nothing found by that id' );
-	}, function(error){
-		console.log ('nothing found by that id' );
-	}).catch(function(error){
-		console.log('catch - nothing found by that id')
-	});
-	/*
-	Todo.create({
-		description: 'Hello world',
-		completed: true
-	}).then(function(todo){
-		return Todo.create({
-			description: 'Promise crap'
-		});
-	}).then(function(){
-		//return Todo.findById(1);
-		return Todo.findAll({
-			where:{
-				//completed:false
-				description: {
-					$like: '%crap%'
-				}
-			}
-		})
-	}).then(function(todos){
-		if (todos)
-		{
-			todos.forEach(function(todo)
-			{
-				console.log(todo.toJSON());
-			});
-		}
-		else{
-			console.log('Nothing found');
-		}
-	}).catch(function(e){
-		console.log(e);
-	});
-	*/
 });
 

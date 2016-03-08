@@ -219,7 +219,12 @@ app.post('/todos', middleware.requireAuthentication, function(req, res){
 	).then(function(todo){
 		if(todo)
 		{
-			res.json(todo);
+			req.user.addTodo(todo).then (function(){
+				return todo.reload();
+			}).then(function(todo){
+				res.json(todo.toJSON());
+			}); //create association
+			//res.json(todo);
 		}
 		else
 		{
@@ -325,7 +330,7 @@ app.post('/users/login', function(req, res){
 
 });
 
-db.sequelize.sync(/*{force:true}*/).then(function(){
+db.sequelize.sync({force:true}).then(function(){
 app.listen(PORT, function(){
 	console.log('Express started and listening on port ' + PORT);
 });
